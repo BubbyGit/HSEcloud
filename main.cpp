@@ -1,43 +1,74 @@
+/**
+ * @file main.cpp
+ * @brief Основной файл для приложения Cloud Storage Bot.
+ */
+
 #include <tgbot/tgbot.h>
 #include <iostream>
 #include <memory>
 #include <random>
 #include <filesystem>
+#include <thread>
+#include <fstream>
+#include <sstream>
+#include <httplib.h>
 
 #define SQLITECPP_COMPILE_DLL
 #include <SQLiteCpp/SQLiteCpp.h>
 
 namespace fs = std::filesystem;
 
+/**
+ * @brief Инициализация базы данных.
+ * 
+ * Эта функция создаёт SQLite базу данных и таблицу, если она не существует.
+ * 
+ * @param dbFileName Имя файла базы данных.
+ */
 void initDatabase(const std::string& dbFileName) {
     try {
         SQLite::Database db(dbFileName, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
         db.exec("CREATE TABLE IF NOT EXISTS users ("
-            "id INTEGER PRIMARY KEY, "
-            "token TEXT);");
+                "id INTEGER PRIMARY KEY, "
+                "token TEXT);");
 
-        std::cout << "Database initialized successfully." << std::endl;
+        std::cout << "The database has been successfully initialized." << std::endl;
     }
     catch (const std::exception& e) {
-        std::cerr << "Error initializing database: " << e.what() << std::endl;
+        std::cerr << "Error during database initialization: " << e.what() << std::endl;
     }
 }
 
+/**
+ * @brief Добавление пользователя в базу данных.
+ * 
+ * Эта функция вставляет нового пользователя в базу данных с начальным значением NULL для токена.
+ * 
+ * @param dbFileName Имя файла базы данных.
+ * @param userId Идентификатор пользователя.
+ */
 void addUserToDatabase(const std::string& dbFileName, int64_t userId) {
     try {
         SQLite::Database db(dbFileName, SQLite::OPEN_READWRITE);
         SQLite::Statement query(db, "INSERT OR IGNORE INTO users (id, token) VALUES (?, ?)");
         query.bind(1, userId);
-        query.bind(2, nullptr);  // Initially, token is NULL
+        query.bind(2, nullptr);  // Изначально токен NULL
         query.exec();
 
-        std::cout << "User added to database successfully." << std::endl;
+        std::cout << "The user has been successfully added to the database." << std::endl;
     }
     catch (const std::exception& e) {
-        std::cerr << "Error adding user to database: " << e.what() << std::endl;
+        std::cerr << "Error when adding a user to the database: " << e.what() << std::endl;
     }
 }
 
+/**
+ * @brief Генерация токена.
+ * 
+ * Эта функция генерирует случайный токен, состоящий из букв и цифр.
+ * 
+ * @return Сгенерированный токен.
+ */
 std::string generateToken() {
     const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     const size_t maxIndex = (sizeof(charset) - 1);
@@ -53,6 +84,15 @@ std::string generateToken() {
     return token;
 }
 
+/**
+ * @brief Обновление токена пользователя.
+ * 
+ * Эта функция обновляет токен пользователя в базе данных.
+ * 
+ * @param dbFileName Имя файла базы данных.
+ * @param userId Идентификатор пользователя.
+ * @param token Новый токен.
+ */
 void updateUserToken(const std::string& dbFileName, int64_t userId, const std::string& token) {
     try {
         SQLite::Database db(dbFileName, SQLite::OPEN_READWRITE);
@@ -61,13 +101,22 @@ void updateUserToken(const std::string& dbFileName, int64_t userId, const std::s
         query.bind(2, userId);
         query.exec();
 
-        std::cout << "User token updated successfully." << std::endl;
+        std::cout << "The user token has been successfully updated." << std::endl;
     }
     catch (const std::exception& e) {
-        std::cerr << "Error updating user token: " << e.what() << std::endl;
+        std::cerr << "Error when updating a user token: " << e.what() << std::endl;
     }
 }
 
+/**
+ * @brief Получение токена пользователя.
+ * 
+ * Эта функция извлекает токен пользователя из базы данных.
+ * 
+ * @param dbFileName Имя файла базы данных.
+ * @param userId Идентификатор пользователя.
+ * @return Токен пользователя.
+ */
 std::string getUserToken(const std::string& dbFileName, int64_t userId) {
     try {
         SQLite::Database db(dbFileName, SQLite::OPEN_READONLY);
@@ -79,18 +128,133 @@ std::string getUserToken(const std::string& dbFileName, int64_t userId) {
         }
     }
     catch (const std::exception& e) {
-        std::cerr << "Error getting user token: " << e.what() << std::endl;
+        std::cerr << "Error while retrieving a user token: " << e.what() << std::endl;
     }
     return "";
 }
 
+/**
+ * @brief Создание папки для пользователя.
+ * 
+ * Эта функция создаёт директорию для хранения файлов пользователя.
+ * 
+ * @param token Токен пользователя.
+ */
 void createFolderForUser(const std::string& token) {
     fs::create_directories("files/" + token);
-    std::cout << "Folder created for user with token: " << token << std::endl;
+    std::cout << "A folder is created for the user with the token: " << token << std::endl;
+}
+
+/**
+ * @brief Получение списка файлов.
+ * 
+ * Эта функция возвращает список файлов в указанной директории.
+ * 
+ * @param folder_path Путь к директории.
+ * @return Вектор с именами файлов.
+ */
+std::vector<std::string> get_files(const std::string& folder_path) {
+    std::vector<std::string> file_list;
+    for (const auto& entry : fs::directory_iterator(folder_path)) {
+        file_list.push_back(entry.path().filename().string());
+    }
+    return file_list;
+}
+
+/**
+ * @brief Проверка токена.
+ * 
+ * Эта функция проверяет существование директории для данного токена.
+ * 
+ * @param token Токен пользователя.
+ * @return true, если директория существует и является директорией.
+ * @return false, если директория не существует или не является директорией.
+ */
+bool validate_token(const std::string& token) {
+    std::string token_folder = "files/" + token;
+    return fs::exists(token_folder) && fs::is_directory(token_folder);
+}
+
+/**
+ * @brief Генерация HTML-списка файлов.
+ * 
+ * Эта функция создаёт HTML-код для отображения списка файлов.
+ * 
+ * @param files Вектор с именами файлов.
+ * @param token Токен пользователя.
+ * @return Строка с HTML-кодом списка файлов.
+ */
+std::string generate_file_list_html(const std::vector<std::string>& files, const std::string& token) {
+    std::stringstream ss;
+    for (const auto& file : files) {
+        ss << "<li><a href=\"/download/" << token << "/" << file << "\">" << file << "</a></li>\n";
+    }
+    return ss.str();
+}
+
+/**
+ * @brief Запуск сервера.
+ * 
+ * Эта функция запускает HTTP-сервер, который обрабатывает запросы на загрузку и скачивание файлов.
+ */
+void startServer() {
+    httplib::Server svr;
+
+    svr.Get("/", [](const httplib::Request&, httplib::Response& res) {
+        std::ifstream file("website.html");
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        res.set_content(buffer.str(), "text/html");
+    });
+
+    svr.Get(R"(/files/(.*))", [](const httplib::Request& req, httplib::Response& res) {
+        std::string token = req.matches[1].str();
+        if (validate_token(token)) {
+            auto files = get_files("files/" + token);
+            std::string file_list_html = generate_file_list_html(files, token);
+            res.set_content(file_list_html, "text/html");
+        }
+        else {
+            res.set_content("Invalid token.", "text/plain");
+        }
+    });
+
+    svr.Post(R"(/upload/(.*))", [](const httplib::Request& req, httplib::Response& res) {
+        std::string token = req.matches[1].str();
+        auto file = req.get_file_value("file");
+        std::string file_path = "files/" + token + "/" + file.filename;
+
+        std::ofstream ofs(file_path, std::ios::binary);
+        ofs.write(file.content.data(), file.content.size());
+
+        res.set_content("File uploaded successfully.", "text/plain");
+    });
+
+    svr.Get(R"(/download/(.*)/(.*))", [](const httplib::Request& req, httplib::Response& res) {
+        std::string token = req.matches[1].str();
+        std::string file_name = req.matches[2].str();
+        std::string file_path = "files/" + token + "/" + file_name;
+
+        std::ifstream file(file_path, std::ios::binary);
+        if (file.is_open()) {
+            std::stringstream buffer;
+            buffer << file.rdbuf();
+            res.set_content(buffer.str(), "application/octet-stream");
+            res.set_header("Content-Disposition", "attachment; filename=\"" + file_name + "\"");
+        }
+        else {
+            res.status = 404;
+            res.set_content("File not found.", "text/plain");
+        }
+    });
+
+    svr.listen("0.0.0.0", 8080);
 }
 
 int main() {
-    TgBot::Bot bot("7241180998:AAEBDjKwo4gRCZZYgWkNhZkKSWrEKitsHDg");
+    std::thread serverThread(startServer);
+
+    TgBot::Bot bot("YOUR_BOT_TOKEN");
 
     initDatabase("cloud_storage.db");
 
@@ -98,7 +262,7 @@ int main() {
         addUserToDatabase("cloud_storage.db", message->chat->id);
 
         std::string token = getUserToken("cloud_storage.db", message->chat->id);
-        std::string responseMessage = "Welcome to Cloud Storage Bot! Here you can upload and manage your files.";
+        std::string responseMessage = "Welcome to HSECloud Bot! Here you can upload and manage your files.";
         if (!token.empty()) {
             responseMessage += "\n\nYour current token: " + token;
         }
@@ -110,19 +274,19 @@ int main() {
         std::vector<TgBot::InlineKeyboardButton::Ptr> row;
 
         TgBot::InlineKeyboardButton::Ptr tokenButton(new TgBot::InlineKeyboardButton);
-        tokenButton->text = "Token";
+        tokenButton->text = "Токен";
         tokenButton->callbackData = "token";
         row.push_back(tokenButton);
 
         TgBot::InlineKeyboardButton::Ptr uploadButton(new TgBot::InlineKeyboardButton);
-        uploadButton->text = "Upload";
+        uploadButton->text = "Загрузка";
         uploadButton->callbackData = "upload";
         row.push_back(uploadButton);
 
         keyboard->inlineKeyboard.push_back(row);
 
         bot.getApi().sendMessage(message->chat->id, responseMessage, false, 0, keyboard);
-        });
+    });
 
     bot.getEvents().onCallbackQuery([&bot](TgBot::CallbackQuery::Ptr query) {
         if (query->data == "token") {
@@ -130,12 +294,12 @@ int main() {
             std::vector<TgBot::InlineKeyboardButton::Ptr> rowYesNo;
 
             TgBot::InlineKeyboardButton::Ptr yesButton(new TgBot::InlineKeyboardButton);
-            yesButton->text = "Yes";
+            yesButton->text = "Да";
             yesButton->callbackData = "confirm_yes";
             rowYesNo.push_back(yesButton);
 
             TgBot::InlineKeyboardButton::Ptr noButton(new TgBot::InlineKeyboardButton);
-            noButton->text = "No";
+            noButton->text = "Нет";
             noButton->callbackData = "confirm_no";
             rowYesNo.push_back(noButton);
 
@@ -146,10 +310,10 @@ int main() {
         else if (query->data == "confirm_yes") {
             std::string newToken = generateToken();
             updateUserToken("cloud_storage.db", query->message->chat->id, newToken);
-            bot.getApi().sendMessage(query->message->chat->id, "Your new token is: " + newToken);
+            bot.getApi().sendMessage(query->message->chat->id, "Your new token: " + newToken);
         }
         else if (query->data == "confirm_no") {
-            bot.getApi().sendMessage(query->message->chat->id, "Token generation cancelled. Returning to menu.");
+            bot.getApi().sendMessage(query->message->chat->id, "Token generation is canceled. Return to the menu.");
         }
         else if (query->data == "upload") {
             std::string token = getUserToken("cloud_storage.db", query->message->chat->id);
@@ -158,23 +322,24 @@ int main() {
             }
             else {
                 createFolderForUser(token);
-                bot.getApi().sendMessage(query->message->chat->id, "Folder created for your token. Please upload your file.");
+                bot.getApi().sendMessage(query->message->chat->id, "A folder has been created for your token. Please visit http://localhost:8080 to upload your files.");
             }
         }
         bot.getApi().answerCallbackQuery(query->id);
-        });
+    });
 
     TgBot::TgLongPoll longPoll(bot);
 
-    std::cout << "Bot started..." << std::endl;
+    std::cout << "Бот запущен..." << std::endl;
     while (true) {
         try {
             longPoll.start();
         }
         catch (TgBot::TgException& e) {
-            std::cerr << "Error: " << e.what() << std::endl;
+            std::cerr << "Ошибка: " << e.what() << std::endl;
         }
     }
 
+    serverThread.join();
     return 0;
 }
