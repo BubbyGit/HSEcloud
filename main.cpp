@@ -1,6 +1,6 @@
 /**
  * @file main.cpp
- * @brief Основной файл для приложения Cloud Storage Bot.
+ * @brief Основной файл для приложения HSECloud Bot.
  */
 
 
@@ -18,6 +18,23 @@
 #define SQLITECPP_COMPILE_DLL
 #include <SQLiteCpp/SQLiteCpp.h>
 
+
+namespace fs = std::filesystem;
+
+/**
+ * @brief Логирование сообщений.
+ * 
+ * Эта функция записывает сообщения в файл журнала с отметкой времени.
+ * 
+ * @param message Сообщение для записи в журнал.
+ */
+
+void logMessage(const std::string& message) {
+    std::ofstream logFile("bot.log", std::ios_base::app);
+    std::time_t now = std::time(nullptr);
+    logFile << std::ctime(&now) << ": " << message << std::endl;
+
+}
 /**
  * @brief Инициализация базы данных.
  * 
@@ -25,14 +42,6 @@
  * 
  * @param dbFileName Имя файла базы данных.
  */
-
-namespace fs = std::filesystem;
-
-void logMessage(const std::string& message) {
-    std::ofstream logFile("bot.log", std::ios_base::app);
-    std::time_t now = std::time(nullptr);
-    logFile << std::ctime(&now) << ": " << message << std::endl;
-}
 
 void initDatabase(const std::string& dbFileName) {
     try {
@@ -280,6 +289,15 @@ void startServer() {
     logMessage("Server started on port 8080");
 }
 
+/**
+ * @brief Основная функция приложения.
+ * 
+ * Эта функция инициализирует базу данных, настраивает бота Telegram, запускает сервер
+ * и обрабатывает команды и события от пользователей.
+ * 
+ * @return Код завершения программы.
+ */
+
 int main() {
     std::thread serverThread(startServer);
 
@@ -376,6 +394,14 @@ int main() {
         });
 
     TgBot::TgLongPoll longPoll(bot);
+
+    /**
+ * @brief Логирование сообщений.
+ * 
+ * Эта функция записывает сообщения в файл журнала с отметкой времени.
+ * 
+ * @param message Сообщение для записи в журнал.
+ */
 
     logMessage("Bot started...");
     while (true) {
