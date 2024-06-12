@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Access</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .form-container {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            input[type="submit"]:hover {
+                background: #0056b3;
+            }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        li {
+            margin: 10px 0;
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+        #message {
+            color: green;
+            margin-top: 10px;
+        }
+
+        #upload-section {
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        function uploadFile(token) {
+            const formData = new FormData();
+            const fileField = document.querySelector('input[type="file"]');
+            formData.append('file', fileField.files[0]);
+
+            fetch('/upload/' + token, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('message').innerText = data;
+                    loadFiles(token);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function loadFiles(token) {
+            fetch('/files/' + token)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('file-list').innerHTML = data;
+                    document.getElementById('upload-section').style.display = 'block';
+                });
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const token = document.querySelector('input[name="token"]').value;
+            loadFiles(token);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('form').addEventListener('submit', handleFormSubmit);
+            document.querySelector('#upload-form').addEventListener('submit', event => {
+                event.preventDefault();
+                const token = document.querySelector('input[name="token"]').value;
+                uploadFile(token);
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Token</h1>
+        <div class="form-container">
+            <form>
+                <input type="text" name="token" placeholder="Enter token" required>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div id="file-list"></div>
+        <div id="upload-section" style="display: none;">
+            <h2>Upload File</h2>
+            <form id="upload-form">
+                <input type="file" name="file" required>
+                <input type="submit" value="Upload">
+            </form>
+            <div id="message"></div>
+        </div>
+    </div>
+</body>
+</html>
