@@ -1,3 +1,9 @@
+/**
+ * @file main.cpp
+ * @brief Основной файл для приложения Cloud Storage Bot.
+ */
+
+
 #include <tgbot/tgbot.h>
 #include <iostream>
 #include <memory>
@@ -11,6 +17,14 @@
 
 #define SQLITECPP_COMPILE_DLL
 #include <SQLiteCpp/SQLiteCpp.h>
+
+/**
+ * @brief Инициализация базы данных.
+ * 
+ * Эта функция создаёт SQLite базу данных и таблицу, если она не существует.
+ * 
+ * @param dbFileName Имя файла базы данных.
+ */
 
 namespace fs = std::filesystem;
 
@@ -33,6 +47,15 @@ void initDatabase(const std::string& dbFileName) {
     }
 }
 
+/**
+ * @brief Добавление пользователя в базу данных.
+ * 
+ * Эта функция вставляет нового пользователя в базу данных с начальным значением NULL для токена.
+ * 
+ * @param dbFileName Имя файла базы данных.
+ * @param userId Идентификатор пользователя.
+ */
+
 void addUserToDatabase(const std::string& dbFileName, int64_t userId) {
     try {
         SQLite::Database db(dbFileName, SQLite::OPEN_READWRITE);
@@ -46,6 +69,14 @@ void addUserToDatabase(const std::string& dbFileName, int64_t userId) {
         logMessage("Error adding user to database: " + std::string(e.what()));
     }
 }
+
+/**
+ * @brief Генерация токена.
+ * 
+ * Эта функция генерирует случайный токен, состоящий из букв и цифр.
+ * 
+ * @return Сгенерированный токен.
+ */
 
 std::string generateToken() {
     const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -62,6 +93,16 @@ std::string generateToken() {
     return token;
 }
 
+/**
+ * @brief Обновление токена пользователя.
+ * 
+ * Эта функция обновляет токен пользователя в базе данных.
+ * 
+ * @param dbFileName Имя файла базы данных.
+ * @param userId Идентификатор пользователя.
+ * @param token Новый токен.
+ */
+
 void updateUserToken(const std::string& dbFileName, int64_t userId, const std::string& token) {
     try {
         SQLite::Database db(dbFileName, SQLite::OPEN_READWRITE);
@@ -75,6 +116,16 @@ void updateUserToken(const std::string& dbFileName, int64_t userId, const std::s
         logMessage("Error updating user token: " + std::string(e.what()));
     }
 }
+
+/**
+ * @brief Получение токена пользователя.
+ * 
+ * Эта функция извлекает токен пользователя из базы данных.
+ * 
+ * @param dbFileName Имя файла базы данных.
+ * @param userId Идентификатор пользователя.
+ * @return Токен пользователя.
+ */
 
 std::string getUserToken(const std::string& dbFileName, int64_t userId) {
     try {
@@ -94,6 +145,14 @@ std::string getUserToken(const std::string& dbFileName, int64_t userId) {
     return "";
 }
 
+/**
+ * @brief Создание папки для пользователя.
+ * 
+ * Эта функция создаёт директорию для хранения файлов пользователя.
+ * 
+ * @param token Токен пользователя.
+ */
+
 void createFolderForUser(const std::string& token) {
     try {
         std::string path = "C:/Users/Public/Music/CloudBot/main/files/" + token;
@@ -105,6 +164,15 @@ void createFolderForUser(const std::string& token) {
     }
 }
 
+/**
+ * @brief Получение списка файлов.
+ * 
+ * Эта функция возвращает список файлов в указанной директории.
+ * 
+ * @param folder_path Путь к директории.
+ * @return Вектор с именами файлов.
+ */
+
 std::vector<std::string> get_files(const std::string& folder_path) {
     std::vector<std::string> file_list;
     for (const auto& entry : fs::directory_iterator(folder_path)) {
@@ -114,12 +182,32 @@ std::vector<std::string> get_files(const std::string& folder_path) {
     return file_list;
 }
 
+/**
+ * @brief Проверка токена.
+ * 
+ * Эта функция проверяет существование директории для данного токена.
+ * 
+ * @param token Токен пользователя.
+ * @return true, если директория существует и является директорией.
+ * @return false, если директория не существует или не является директорией.
+ */
+
 bool validate_token(const std::string& token) {
     std::string token_folder = "C:/Users/Public/Music/CloudBot/main/files/" + token;
     bool isValid = fs::exists(token_folder) && fs::is_directory(token_folder);
     logMessage("Token validation: " + token + " is " + (isValid ? "valid" : "invalid"));
     return isValid;
 }
+
+/**
+ * @brief Генерация HTML-списка файлов.
+ * 
+ * Эта функция создаёт HTML-код для отображения списка файлов.
+ * 
+ * @param files Вектор с именами файлов.
+ * @param token Токен пользователя.
+ * @return Строка с HTML-кодом списка файлов.
+ */
 
 std::string generate_file_list_html(const std::vector<std::string>& files, const std::string& token) {
     std::stringstream ss;
@@ -129,6 +217,12 @@ std::string generate_file_list_html(const std::vector<std::string>& files, const
     logMessage("HTML file list generated for token: " + token);
     return ss.str();
 }
+
+/**
+ * @brief Запуск сервера.
+ * 
+ * Эта функция запускает HTTP-сервер, который обрабатывает запросы на загрузку и скачивание файлов.
+ */
 
 void startServer() {
     httplib::Server svr;
