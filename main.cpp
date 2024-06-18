@@ -1,13 +1,3 @@
-/**
- * @file main.cpp
- * @brief Основной файл для приложения HSECloud Bot.
- *
- * Этот файл содержит реализацию бота для Telegram, который предоставляет
- * функциональность облачного хранилища для пользователей. Бот использует
- * библиотеку TgBot для взаимодействия с API Telegram, SQLiteCpp для работы с
- * базой данных SQLite, а также httplib для запуска HTTP-сервера.
- */
-
 #include <tgbot/tgbot.h>
 #include <iostream>
 #include <memory>
@@ -24,34 +14,30 @@
 
 namespace fs = std::filesystem;
 
-/**
- * @brief Логирование сообщений.
- *
- * Эта функция записывает сообщения в файл журнала с отметкой времени.
- *
- * @param message Сообщение для записи в журнал.
- */
+// Получение текущего рабочего каталога
+std::string getCurrentDir() {
+    return fs::current_path().string();
+}
+
+// Пути к файлам, основанные на текущем рабочем каталоге
+const std::string BASE_PATH = getCurrentDir();
+const std::string DB_PATH = BASE_PATH + "/cloud_storage.db";
+const std::string HTML_PATH = BASE_PATH + "/";
+
+// Остальная часть кода...
 
 void logMessage(const std::string& message) {
-    std::ofstream logFile("bot.log", std::ios_base::app);
+    std::ofstream logFile(BASE_PATH + "/bot.log", std::ios_base::app);
     std::time_t now = std::time(nullptr);
     logFile << std::ctime(&now) << ": " << message << std::endl;
 }
 
-/**
- * @brief Инициализация базы данных.
- *
- * Эта функция создаёт SQLite базу данных и таблицу, если она не существует.
- *
- * @param dbFileName Имя файла базы данных.
- */
-
-void initDatabase(const std::string& dbFileName) {
+void initDatabase() {
     try {
-        SQLite::Database db(dbFileName, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        SQLite::Database db(DB_PATH, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
         db.exec("CREATE TABLE IF NOT EXISTS users ("
-            "id INTEGER PRIMARY KEY, "
-            "token TEXT);");
+                "id INTEGER PRIMARY KEY, "
+                "token TEXT);");
         logMessage("Database initialized successfully.");
     }
     catch (const std::exception& e) {
@@ -59,18 +45,9 @@ void initDatabase(const std::string& dbFileName) {
     }
 }
 
-/**
- * @brief Добавление пользователя в базу данных.
- *
- * Эта функция вставляет нового пользователя в базу данных с начальным значением NULL для токена.
- *
- * @param dbFileName Имя файла базы данных.
- * @param userId Идентификатор пользователя.
- */
-
-void addUserToDatabase(const std::string& dbFileName, int64_t userId) {
+void addUserToDatabase(int64_t userId) {
     try {
-        SQLite::Database db(dbFileName, SQLite::OPEN_READWRITE);
+        SQLite::Database db(DB_PATH, SQLite::OPEN_READWRITE);
         SQLite::Statement query(db, "INSERT OR IGNORE INTO users (id, token) VALUES (?, ?)");
         query.bind(1, userId);
         query.bind(2, nullptr);  // Initially, token is NULL
@@ -81,14 +58,6 @@ void addUserToDatabase(const std::string& dbFileName, int64_t userId) {
         logMessage("Error adding user to database: " + std::string(e.what()));
     }
 }
-
-/**
- * @brief Генерация токена.
- *
- * Эта функция генерирует случайный токен, состоящий из букв и цифр.
- *
- * @return Сгенерированный токен.
- */
 
 std::string generateToken() {
     const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -105,19 +74,9 @@ std::string generateToken() {
     return token;
 }
 
-/**
- * @brief Обновление токена пользователя.
- *
- * Эта функция обновляет токен пользователя в базе данных.
- *
- * @param dbFileName Имя файла базы данных.
- * @param userId Идентификатор пользователя.
- * @param token Новый токен.
- */
-
-void updateUserToken(const std::string& dbFileName, int64_t userId, const std::string& token) {
+void updateUserToken(int64_t userId, const std::string& token) {
     try {
-        SQLite::Database db(dbFileName, SQLite::OPEN_READWRITE);
+        SQLite::Database db(DB_PATH, SQLite::OPEN_READWRITE);
         SQLite::Statement query(db, "UPDATE users SET token = ? WHERE id = ?");
         query.bind(1, token);
         query.bind(2, userId);
@@ -129,19 +88,9 @@ void updateUserToken(const std::string& dbFileName, int64_t userId, const std::s
     }
 }
 
-/**
- * @brief Получение токена пользователя.
- *
- * Эта функция извлекает токен пользователя из базы данных.
- *
- * @param dbFileName Имя файла базы данных.
- * @param userId Идентификатор пользователя.
- * @return Токен пользователя.
- */
-
-std::string getUserToken(const std::string& dbFileName, int64_t userId) {
+std::string getUserToken(int64_t userId) {
     try {
-        SQLite::Database db(dbFileName, SQLite::OPEN_READONLY);
+        SQLite::Database db(DB_PATH, SQLite::OPEN_READONLY);
         SQLite::Statement query(db, "SELECT token FROM users WHERE id = ?");
         query.bind(1, userId);
 
@@ -157,17 +106,9 @@ std::string getUserToken(const std::string& dbFileName, int64_t userId) {
     return "";
 }
 
-/**
- * @brief Создание папки для пользователя.
- *
- * Эта функция создаёт директорию для хранения файлов пользователя.
- *
- * @param token Токен пользователя.
- */
-
 void createFolderForUser(const std::string& token) {
     try {
-        std::string path = "C:/Users/Public/Music/CloudBot/main/files/" + token;
+        std::string path = BASE_PATH + "/files/" + token;
         fs::create_directories(path);
         logMessage("Folder created for user with token: " + token);
     }
@@ -175,15 +116,6 @@ void createFolderForUser(const std::string& token) {
         logMessage("Error creating folder for user: " + std::string(e.what()));
     }
 }
-
-/**
- * @brief Получение списка файлов.
- *
- * Эта функция возвращает список файлов в указанной директории.
- *
- * @param folder_path Путь к директории.
- * @return Вектор с именами файлов.
- */
 
 std::vector<std::string> get_files(const std::string& folder_path) {
     std::vector<std::string> file_list;
@@ -194,32 +126,12 @@ std::vector<std::string> get_files(const std::string& folder_path) {
     return file_list;
 }
 
-/**
- * @brief Проверка токена.
- *
- * Эта функция проверяет существование директории для данного токена.
- *
- * @param token Токен пользователя.
- * @return true, если директория существует и является директорией.
- * @return false, если директория не существует или не является директорией.
- */
-
 bool validate_token(const std::string& token) {
-    std::string token_folder = "C:/Users/Public/Music/CloudBot/main/files/" + token;
+    std::string token_folder = BASE_PATH + "/files/" + token;
     bool isValid = fs::exists(token_folder) && fs::is_directory(token_folder);
     logMessage("Token validation: " + token + " is " + (isValid ? "valid" : "invalid"));
     return isValid;
 }
-
-/**
- * @brief Генерация HTML-списка файлов.
- *
- * Эта функция создаёт HTML-код для отображения списка файлов.
- *
- * @param files Вектор с именами файлов.
- * @param token Токен пользователя.
- * @return Строка с HTML-кодом списка файлов.
- */
 
 std::string generate_file_list_html(const std::vector<std::string>& files, const std::string& token) {
     std::stringstream ss;
@@ -230,20 +142,11 @@ std::string generate_file_list_html(const std::vector<std::string>& files, const
     return ss.str();
 }
 
-/**
- * @brief Генерация временного токена для отправки.
- *
- * Эта функция генерирует случайный токен фиксированной длины, состоящий из букв и цифр.
- *
- * @param length Длина токена.
- * @return Сгенерированный токен.
- */
-
 std::string generate_send_token(size_t length) {
     const char charset[] =
-        "0123456789"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
+            "0123456789"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz";
     std::default_random_engine rng(std::random_device{}());
     std::uniform_int_distribution<> dist(0, sizeof(charset) - 2);
 
@@ -254,20 +157,9 @@ std::string generate_send_token(size_t length) {
     return token;
 }
 
-/**
- * @brief Обработка загрузки файла.
- *
- * Эта функция обрабатывает запросы на загрузку файлов, создаёт директорию для
- * временного токена и сохраняет загруженные файлы в эту директорию.
- *
- * @param req Запрос.
- * @param res Ответ.
- */
-
-
 void handle_file_upload(const httplib::Request& req, httplib::Response& res) {
     std::string token = generate_send_token(12);
-    std::string dir_path = "hidefiles/" + token;
+    std::string dir_path = BASE_PATH + "/hidefiles/" + token;
     fs::create_directories(dir_path);
 
     std::vector<std::string> filenames;
@@ -292,19 +184,9 @@ void handle_file_upload(const httplib::Request& req, httplib::Response& res) {
     res.set_content(response, "application/json");
 }
 
-/**
- * @brief Обработка страницы загрузки файлов.
- *
- * Эта функция обрабатывает запросы на загрузку страницы со списком файлов для
- * временного токена.
- *
- * @param req Запрос.
- * @param res Ответ.
- */
-
 void handle_file_download_page(const httplib::Request& req, httplib::Response& res) {
     std::string token = req.matches[1].str();
-    std::string dir_path = "hidefiles/" + token;
+    std::string dir_path = BASE_PATH + "/hidefiles/" + token;
 
     if (!fs::exists(dir_path) || !fs::is_directory(dir_path)) {
         res.set_content("Files not found", "text/plain");
@@ -325,19 +207,10 @@ void handle_file_download_page(const httplib::Request& req, httplib::Response& r
     res.set_content(html, "text/html");
 }
 
-/**
- * @brief Обработка скачивания файлов.
- *
- * Эта функция обрабатывает запросы на скачивание файлов для временного токена.
- *
- * @param req Запрос.
- * @param res Ответ.
- */
-
 void handle_file_download(const httplib::Request& req, httplib::Response& res) {
     std::string token = req.matches[1].str();
     std::string filename = req.matches[2].str();
-    std::string file_path = "hidefiles/" + token + "/" + filename;
+    std::string file_path = BASE_PATH + "/hidefiles/" + token + "/" + filename;
 
     if (fs::exists(file_path) && fs::is_regular_file(file_path)) {
         std::ifstream ifs(file_path, std::ios::binary);
@@ -352,51 +225,44 @@ void handle_file_download(const httplib::Request& req, httplib::Response& res) {
     }
 }
 
-/**
- * @brief Запуск HTTP-сервера.
- *
- * Эта функция запускает HTTP-сервер для обработки различных запросов, включая
- * загрузку и скачивание файлов, а также отображение страниц.
- */
-
 void startServer() {
     httplib::Server svr;
 
     svr.Get("/", [](const httplib::Request&, httplib::Response& res) {
-        std::ifstream file("index.html");
+        std::ifstream file(HTML_PATH + "index.html");
         std::stringstream buffer;
         buffer << file.rdbuf();
         res.set_content(buffer.str(), "text/html");
         logMessage("Served index.html");
-        });
+    });
 
     svr.Get(R"(/files/(.*))", [](const httplib::Request& req, httplib::Response& res) {
         std::string token = req.matches[1].str();
         if (validate_token(token)) {
-            auto files = get_files("C:/Users/Public/Music/CloudBot/main/files/" + token);
+            auto files = get_files(BASE_PATH + "/files/" + token);
             std::string file_list_html = generate_file_list_html(files, token);
             res.set_content(file_list_html, "text/html");
         }
         else {
             res.set_content("Invalid token.", "text/plain");
         }
-        });
+    });
 
     svr.Post(R"(/upload/(.*))", [](const httplib::Request& req, httplib::Response& res) {
         std::string token = req.matches[1].str();
         auto file = req.get_file_value("file");
-        std::string file_path = "C:/Users/Public/Music/CloudBot/main/files/" + token + "/" + file.filename;
+        std::string file_path = BASE_PATH + "/files/" + token + "/" + file.filename;
 
         std::ofstream ofs(file_path, std::ios::binary);
         ofs.write(file.content.data(), file.content.size());
         res.set_content("File uploaded successfully.", "text/plain");
         logMessage("File uploaded for token: " + token + ", File: " + file.filename);
-        });
+    });
 
     svr.Get(R"(/download/(.*)/(.*))", [](const httplib::Request& req, httplib::Response& res) {
         std::string token = req.matches[1].str();
         std::string file_name = req.matches[2].str();
-        std::string file_path = "C:/Users/Public/Music/CloudBot/main/files/" + token + "/" + file_name;
+        std::string file_path = BASE_PATH + "/files/" + token + "/" + file_name;
 
         std::ifstream file(file_path, std::ios::binary);
         if (file.is_open()) {
@@ -409,13 +275,13 @@ void startServer() {
             res.status = 404;
             res.set_content("File not found.", "text/plain");
         }
-        });
+    });
 
     svr.Get("/sendfile", [](const httplib::Request&, httplib::Response& res) {
-        std::ifstream ifs("sendfiles.html");
+        std::ifstream ifs(HTML_PATH + "sendfiles.html");
         std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
         res.set_content(content, "text/html");
-        });
+    });
 
     svr.Post("/upload", handle_file_upload);
     svr.Get(R"(/sendfile/([0-9A-Za-z]+))", handle_file_download_page);
@@ -425,26 +291,17 @@ void startServer() {
     svr.listen("0.0.0.0", 8080);
 }
 
-/**
- * @brief Основная функция приложения.
- *
- * Эта функция инициализирует базу данных, настраивает бота Telegram, запускает сервер
- * и обрабатывает команды и события от пользователей.
- *
- * @return Код завершения программы.
- */
-
 int main() {
     std::thread serverThread(startServer);
 
     TgBot::Bot bot("7241180998:AAEBDjKwo4gRCZZYgWkNhZkKSWrEKitsHDg");
 
-    initDatabase("cloud_storage.db");
+    initDatabase();
 
     bot.getEvents().onCommand("start", [&bot](TgBot::Message::Ptr message) {
-        addUserToDatabase("cloud_storage.db", message->chat->id);
+        addUserToDatabase(message->chat->id);
 
-        std::string token = getUserToken("cloud_storage.db", message->chat->id);
+        std::string token = getUserToken(message->chat->id);
         std::string responseMessage = "Welcome to Cloud Storage Bot! Here you can upload and manage your files.";
         if (!token.empty()) {
             responseMessage += "\n\nYour current token: " + token;
@@ -475,7 +332,7 @@ int main() {
 
         bot.getApi().sendMessage(message->chat->id, responseMessage, false, 0, keyboard);
         logMessage("Sent welcome message to user. UserID: " + std::to_string(message->chat->id));
-        });
+    });
 
     bot.getEvents().onCallbackQuery([&bot](TgBot::CallbackQuery::Ptr query) {
         if (query->data == "token") {
@@ -499,7 +356,7 @@ int main() {
         }
         else if (query->data == "confirm_yes") {
             std::string newToken = generateToken();
-            updateUserToken("cloud_storage.db", query->message->chat->id, newToken);
+            updateUserToken(query->message->chat->id, newToken);
             bot.getApi().sendMessage(query->message->chat->id, "Your new token is: " + newToken);
             logMessage("Generated new token for user. UserID: " + std::to_string(query->message->chat->id));
         }
@@ -508,7 +365,7 @@ int main() {
             logMessage("Token generation cancelled by user. UserID: " + std::to_string(query->message->chat->id));
         }
         else if (query->data == "upload") {
-            std::string token = getUserToken("cloud_storage.db", query->message->chat->id);
+            std::string token = getUserToken(query->message->chat->id);
             if (token.empty()) {
                 bot.getApi().sendMessage(query->message->chat->id, "You do not have a token yet. Please generate one.");
                 logMessage("User attempted to upload without token. UserID: " + std::to_string(query->message->chat->id));
@@ -522,7 +379,7 @@ int main() {
 
                 TgBot::InlineKeyboardButton::Ptr webAppButton(new TgBot::InlineKeyboardButton);
                 webAppButton->text = "Open WebApp";
-                webAppButton->url = "https://235f-62-217-184-150.ngrok-free.app";
+                webAppButton->url = "https://feb7-109-252-160-118.ngrok-free.app"; // Replace with your actual URL
                 row.push_back(webAppButton);
 
                 keyboard->inlineKeyboard.push_back(row);
@@ -537,7 +394,7 @@ int main() {
 
             TgBot::InlineKeyboardButton::Ptr webAppButton(new TgBot::InlineKeyboardButton);
             webAppButton->text = "Open WebApp";
-            webAppButton->url = "https://235f-62-217-184-150.ngrok-free.app/sendfile";
+            webAppButton->url = "https://feb7-109-252-160-118.ngrok-free.app/sendfile"; // Replace with your actual URL
             row.push_back(webAppButton);
 
             keyboard->inlineKeyboard.push_back(row);
@@ -546,7 +403,7 @@ int main() {
             logMessage("Sent web app link to user. UserID: " + std::to_string(query->message->chat->id));
         }
         bot.getApi().answerCallbackQuery(query->id);
-        });
+    });
 
     TgBot::TgLongPoll longPoll(bot);
 
