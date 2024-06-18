@@ -1,0 +1,636 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.9.8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HSECloud: Файл main.cpp</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">HSECloud
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.9.8 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() {
+  initMenu('',true,false,'search.php','Поиск');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Загрузка...</div>
+<div class="SRStatus" id="Searching">Поиск...</div>
+<div class="SRStatus" id="NoMatches">Не найдено</div>
+</div>
+</div>
+</div>
+</div>
+
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#define-members">Макросы</a> &#124;
+<a href="#func-members">Функции</a> &#124;
+<a href="#var-members">Переменные</a>  </div>
+  <div class="headertitle"><div class="title">Файл main.cpp</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Основной файл для запуска Telegram бота и сервера для управления файлами.  
+<a href="#details">Подробнее...</a></p>
+<div class="textblock"><code>#include &lt;tgbot/tgbot.h&gt;</code><br />
+<code>#include &lt;iostream&gt;</code><br />
+<code>#include &lt;memory&gt;</code><br />
+<code>#include &lt;random&gt;</code><br />
+<code>#include &lt;filesystem&gt;</code><br />
+<code>#include &lt;thread&gt;</code><br />
+<code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;sstream&gt;</code><br />
+<code>#include &lt;httplib.h&gt;</code><br />
+<code>#include &lt;ctime&gt;</code><br />
+<code>#include &lt;SQLiteCpp/SQLiteCpp.h&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Функции</h2></td></tr>
+<tr class="memitem:a239cbd575d4f7beefc99ecc13a13af81" id="r_a239cbd575d4f7beefc99ecc13a13af81"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a239cbd575d4f7beefc99ecc13a13af81">getCurrentDir</a> ()</td></tr>
+<tr class="memdesc:a239cbd575d4f7beefc99ecc13a13af81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Получение текущего рабочего каталога  <br /></td></tr>
+<tr class="separator:a239cbd575d4f7beefc99ecc13a13af81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a393ee32d149db848521732b0a4302057" id="r_a393ee32d149db848521732b0a4302057"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a393ee32d149db848521732b0a4302057">logMessage</a> (const std::string &amp;message)</td></tr>
+<tr class="memdesc:a393ee32d149db848521732b0a4302057"><td class="mdescLeft">&#160;</td><td class="mdescRight">Логирование сообщений  <br /></td></tr>
+<tr class="separator:a393ee32d149db848521732b0a4302057"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7acd85516b0bd48a6fa3e5415a8e814c" id="r_a7acd85516b0bd48a6fa3e5415a8e814c"><td class="memItemLeft" align="right" valign="top"><a id="a7acd85516b0bd48a6fa3e5415a8e814c" name="a7acd85516b0bd48a6fa3e5415a8e814c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>initDatabase</b> ()</td></tr>
+<tr class="memdesc:a7acd85516b0bd48a6fa3e5415a8e814c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Инициализация базы данных <br /></td></tr>
+<tr class="separator:a7acd85516b0bd48a6fa3e5415a8e814c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20878693b412994315ee6cfce2fe895a" id="r_a20878693b412994315ee6cfce2fe895a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a20878693b412994315ee6cfce2fe895a">addUserToDatabase</a> (int64_t userId)</td></tr>
+<tr class="memdesc:a20878693b412994315ee6cfce2fe895a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Добавление пользователя в базу данных  <br /></td></tr>
+<tr class="separator:a20878693b412994315ee6cfce2fe895a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a892adc4f56545e9ad549cf2c910a2304" id="r_a892adc4f56545e9ad549cf2c910a2304"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a892adc4f56545e9ad549cf2c910a2304">generateToken</a> ()</td></tr>
+<tr class="memdesc:a892adc4f56545e9ad549cf2c910a2304"><td class="mdescLeft">&#160;</td><td class="mdescRight">Генерация токена  <br /></td></tr>
+<tr class="separator:a892adc4f56545e9ad549cf2c910a2304"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf4ab2fbd31647cf97c87c0b96136934" id="r_adf4ab2fbd31647cf97c87c0b96136934"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#adf4ab2fbd31647cf97c87c0b96136934">updateUserToken</a> (int64_t userId, const std::string &amp;token)</td></tr>
+<tr class="memdesc:adf4ab2fbd31647cf97c87c0b96136934"><td class="mdescLeft">&#160;</td><td class="mdescRight">Обновление токена пользователя  <br /></td></tr>
+<tr class="separator:adf4ab2fbd31647cf97c87c0b96136934"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29b0702fd19320e040442dd0286096cb" id="r_a29b0702fd19320e040442dd0286096cb"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a29b0702fd19320e040442dd0286096cb">getUserToken</a> (int64_t userId)</td></tr>
+<tr class="memdesc:a29b0702fd19320e040442dd0286096cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Получение токена пользователя  <br /></td></tr>
+<tr class="separator:a29b0702fd19320e040442dd0286096cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbbae2fb967835c5853733560edfd82b" id="r_adbbae2fb967835c5853733560edfd82b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#adbbae2fb967835c5853733560edfd82b">createFolderForUser</a> (const std::string &amp;token)</td></tr>
+<tr class="memdesc:adbbae2fb967835c5853733560edfd82b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Создание папки для пользователя  <br /></td></tr>
+<tr class="separator:adbbae2fb967835c5853733560edfd82b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b0abda6a5878edf8760a7c6cb2bc873" id="r_a0b0abda6a5878edf8760a7c6cb2bc873"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a0b0abda6a5878edf8760a7c6cb2bc873">get_files</a> (const std::string &amp;folder_path)</td></tr>
+<tr class="memdesc:a0b0abda6a5878edf8760a7c6cb2bc873"><td class="mdescLeft">&#160;</td><td class="mdescRight">Получение списка файлов в папке  <br /></td></tr>
+<tr class="separator:a0b0abda6a5878edf8760a7c6cb2bc873"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31c1f3aaa542d065aa2d9f429ea6a132" id="r_a31c1f3aaa542d065aa2d9f429ea6a132"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a31c1f3aaa542d065aa2d9f429ea6a132">validate_token</a> (const std::string &amp;token)</td></tr>
+<tr class="memdesc:a31c1f3aaa542d065aa2d9f429ea6a132"><td class="mdescLeft">&#160;</td><td class="mdescRight">Проверка валидности токена  <br /></td></tr>
+<tr class="separator:a31c1f3aaa542d065aa2d9f429ea6a132"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d4d17624a719b42568a07c02c2e7563" id="r_a2d4d17624a719b42568a07c02c2e7563"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a2d4d17624a719b42568a07c02c2e7563">generate_file_list_html</a> (const std::vector&lt; std::string &gt; &amp;files, const std::string &amp;token)</td></tr>
+<tr class="memdesc:a2d4d17624a719b42568a07c02c2e7563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Генерация HTML списка файлов  <br /></td></tr>
+<tr class="separator:a2d4d17624a719b42568a07c02c2e7563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18cd4e111f55b98128860f835d73dfda" id="r_a18cd4e111f55b98128860f835d73dfda"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a18cd4e111f55b98128860f835d73dfda">generate_send_token</a> (size_t length)</td></tr>
+<tr class="memdesc:a18cd4e111f55b98128860f835d73dfda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Генерация токена для отправки файла  <br /></td></tr>
+<tr class="separator:a18cd4e111f55b98128860f835d73dfda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7f9a98bdf07b1038febea1bb90d9515" id="r_ad7f9a98bdf07b1038febea1bb90d9515"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#ad7f9a98bdf07b1038febea1bb90d9515">handle_file_upload</a> (const httplib::Request &amp;req, httplib::Response &amp;res)</td></tr>
+<tr class="memdesc:ad7f9a98bdf07b1038febea1bb90d9515"><td class="mdescLeft">&#160;</td><td class="mdescRight">Обработка загрузки файла  <br /></td></tr>
+<tr class="separator:ad7f9a98bdf07b1038febea1bb90d9515"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5757e18bc9e6054c1e3c3aacc7de777d" id="r_a5757e18bc9e6054c1e3c3aacc7de777d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a5757e18bc9e6054c1e3c3aacc7de777d">handle_file_download_page</a> (const httplib::Request &amp;req, httplib::Response &amp;res)</td></tr>
+<tr class="memdesc:a5757e18bc9e6054c1e3c3aacc7de777d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Обработка страницы загрузки файлов  <br /></td></tr>
+<tr class="separator:a5757e18bc9e6054c1e3c3aacc7de777d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3f222f3d2375924073b5b4784db82d2" id="r_ae3f222f3d2375924073b5b4784db82d2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#ae3f222f3d2375924073b5b4784db82d2">handle_file_download</a> (const httplib::Request &amp;req, httplib::Response &amp;res)</td></tr>
+<tr class="memdesc:ae3f222f3d2375924073b5b4784db82d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Обработка загрузки файла  <br /></td></tr>
+<tr class="separator:ae3f222f3d2375924073b5b4784db82d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a581b7b188a852f31975516f81efcc954" id="r_a581b7b188a852f31975516f81efcc954"><td class="memItemLeft" align="right" valign="top"><a id="a581b7b188a852f31975516f81efcc954" name="a581b7b188a852f31975516f81efcc954"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>startServer</b> ()</td></tr>
+<tr class="memdesc:a581b7b188a852f31975516f81efcc954"><td class="mdescLeft">&#160;</td><td class="mdescRight">Запуск сервера <br /></td></tr>
+<tr class="separator:a581b7b188a852f31975516f81efcc954"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae66f6b31b5ad750f1fe042a706a4e3d4" id="r_ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a> ()</td></tr>
+<tr class="memdesc:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Основная функция  <br /></td></tr>
+<tr class="separator:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Переменные</h2></td></tr>
+<tr class="memitem:a0423f4cb393331ce0b9f6b3a43adcaae" id="r_a0423f4cb393331ce0b9f6b3a43adcaae"><td class="memItemLeft" align="right" valign="top"><a id="a0423f4cb393331ce0b9f6b3a43adcaae" name="a0423f4cb393331ce0b9f6b3a43adcaae"></a>
+const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>BASE_PATH</b> = <a class="el" href="main_8cpp.html#a239cbd575d4f7beefc99ecc13a13af81">getCurrentDir</a>()</td></tr>
+<tr class="separator:a0423f4cb393331ce0b9f6b3a43adcaae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c2aed35b22e564ab5989af8454f5d67" id="r_a0c2aed35b22e564ab5989af8454f5d67"><td class="memItemLeft" align="right" valign="top"><a id="a0c2aed35b22e564ab5989af8454f5d67" name="a0c2aed35b22e564ab5989af8454f5d67"></a>
+const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>DB_PATH</b> = BASE_PATH + &quot;/cloud_storage.db&quot;</td></tr>
+<tr class="separator:a0c2aed35b22e564ab5989af8454f5d67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0947e2c5ce91ea54dc053588fb978d7a" id="r_a0947e2c5ce91ea54dc053588fb978d7a"><td class="memItemLeft" align="right" valign="top"><a id="a0947e2c5ce91ea54dc053588fb978d7a" name="a0947e2c5ce91ea54dc053588fb978d7a"></a>
+const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>HTML_PATH</b> = BASE_PATH + &quot;/&quot;</td></tr>
+<tr class="separator:a0947e2c5ce91ea54dc053588fb978d7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Подробное описание</h2>
+<div class="textblock"><p>Основной файл для запуска Telegram бота и сервера для управления файлами. </p>
+<p>Используемые библиотеки:</p><ul>
+<li>TgBot: Библиотека для работы с Telegram Bot API. Используется для управления ботом и обработки событий.</li>
+<li>SQLiteCpp: Библиотека для работы с базой данных SQLite. Используется для хранения данных пользователей и токенов.</li>
+<li>httplib: Библиотека для создания HTTP сервера. Используется для обработки загрузок и загрузок файлов.</li>
+<li>&lt;random&gt;: Используется для генерации случайных токенов.</li>
+<li>&lt;filesystem&gt;: Используется для работы с файловой системой.</li>
+<li>&lt;thread&gt;: Используется для запуска сервера в отдельном потоке.</li>
+<li>&lt;fstream&gt;: Используется для работы с файловыми потоками.</li>
+<li>&lt;sstream&gt;: Используется для работы с потоками строк.</li>
+<li>&lt;ctime&gt;: Используется для получения текущего времени для логирования.</li>
+</ul>
+<p>Основные функции:</p><ul>
+<li>getCurrentDir: Получение текущего рабочего каталога.</li>
+<li>logMessage: Логирование сообщений.</li>
+<li>initDatabase: Инициализация базы данных.</li>
+<li>addUserToDatabase: Добавление пользователя в базу данных.</li>
+<li>generateToken: Генерация случайного токена.</li>
+<li>updateUserToken: Обновление токена пользователя в базе данных.</li>
+<li>getUserToken: Получение токена пользователя из базы данных.</li>
+<li>createFolderForUser: Создание папки для хранения файлов пользователя.</li>
+<li>get_files: Получение списка файлов в папке.</li>
+<li>validate_token: Проверка валидности токена.</li>
+<li>generate_file_list_html: Генерация HTML списка файлов.</li>
+<li>generate_send_token: Генерация токена для отправки файла.</li>
+<li>handle_file_upload: Обработка загрузки файла.</li>
+<li>handle_file_download_page: Обработка страницы загрузки файлов.</li>
+<li>handle_file_download: Обработка загрузки файла.</li>
+<li>startServer: Запуск HTTP сервера.</li>
+<li>main: Основная функция. </li>
+</ul>
+</div><h2 class="groupheader">Функции</h2>
+<a id="a20878693b412994315ee6cfce2fe895a" name="a20878693b412994315ee6cfce2fe895a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20878693b412994315ee6cfce2fe895a">&#9670;&#160;</a></span>addUserToDatabase()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void addUserToDatabase </td>
+          <td>(</td>
+          <td class="paramtype">int64_t&#160;</td>
+          <td class="paramname"><em>userId</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Добавление пользователя в базу данных </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">userId</td><td>Идентификатор пользователя </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="adbbae2fb967835c5853733560edfd82b" name="adbbae2fb967835c5853733560edfd82b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbbae2fb967835c5853733560edfd82b">&#9670;&#160;</a></span>createFolderForUser()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void createFolderForUser </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>token</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Создание папки для пользователя </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">token</td><td>Токен пользователя </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2d4d17624a719b42568a07c02c2e7563" name="a2d4d17624a719b42568a07c02c2e7563"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d4d17624a719b42568a07c02c2e7563">&#9670;&#160;</a></span>generate_file_list_html()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string generate_file_list_html </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
+          <td class="paramname"><em>files</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>token</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Генерация HTML списка файлов </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">files</td><td>Список файлов </td></tr>
+    <tr><td class="paramname">token</td><td>Токен пользователя </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Возвращает</dt><dd>std::string HTML список файлов </dd></dl>
+
+</div>
+</div>
+<a id="a18cd4e111f55b98128860f835d73dfda" name="a18cd4e111f55b98128860f835d73dfda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18cd4e111f55b98128860f835d73dfda">&#9670;&#160;</a></span>generate_send_token()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string generate_send_token </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Генерация токена для отправки файла </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">length</td><td>Длина токена </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Возвращает</dt><dd>std::string Сгенерированный токен </dd></dl>
+
+</div>
+</div>
+<a id="a892adc4f56545e9ad549cf2c910a2304" name="a892adc4f56545e9ad549cf2c910a2304"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a892adc4f56545e9ad549cf2c910a2304">&#9670;&#160;</a></span>generateToken()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string generateToken </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Генерация токена </p>
+<dl class="section return"><dt>Возвращает</dt><dd>std::string Сгенерированный токен </dd></dl>
+
+</div>
+</div>
+<a id="a0b0abda6a5878edf8760a7c6cb2bc873" name="a0b0abda6a5878edf8760a7c6cb2bc873"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b0abda6a5878edf8760a7c6cb2bc873">&#9670;&#160;</a></span>get_files()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::string &gt; get_files </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>folder_path</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Получение списка файлов в папке </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">folder_path</td><td>Путь к папке </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Возвращает</dt><dd>std::vector&lt;std::string&gt; Список файлов </dd></dl>
+
+</div>
+</div>
+<a id="a239cbd575d4f7beefc99ecc13a13af81" name="a239cbd575d4f7beefc99ecc13a13af81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a239cbd575d4f7beefc99ecc13a13af81">&#9670;&#160;</a></span>getCurrentDir()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string getCurrentDir </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Получение текущего рабочего каталога </p>
+<dl class="section return"><dt>Возвращает</dt><dd>std::string Текущий рабочий каталог </dd></dl>
+
+</div>
+</div>
+<a id="a29b0702fd19320e040442dd0286096cb" name="a29b0702fd19320e040442dd0286096cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29b0702fd19320e040442dd0286096cb">&#9670;&#160;</a></span>getUserToken()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string getUserToken </td>
+          <td>(</td>
+          <td class="paramtype">int64_t&#160;</td>
+          <td class="paramname"><em>userId</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Получение токена пользователя </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">userId</td><td>Идентификатор пользователя </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Возвращает</dt><dd>std::string Токен пользователя </dd></dl>
+
+</div>
+</div>
+<a id="ae3f222f3d2375924073b5b4784db82d2" name="ae3f222f3d2375924073b5b4784db82d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3f222f3d2375924073b5b4784db82d2">&#9670;&#160;</a></span>handle_file_download()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void handle_file_download </td>
+          <td>(</td>
+          <td class="paramtype">const httplib::Request &amp;&#160;</td>
+          <td class="paramname"><em>req</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">httplib::Response &amp;&#160;</td>
+          <td class="paramname"><em>res</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Обработка загрузки файла </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">req</td><td>HTTP запрос </td></tr>
+    <tr><td class="paramname">res</td><td>HTTP ответ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5757e18bc9e6054c1e3c3aacc7de777d" name="a5757e18bc9e6054c1e3c3aacc7de777d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5757e18bc9e6054c1e3c3aacc7de777d">&#9670;&#160;</a></span>handle_file_download_page()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void handle_file_download_page </td>
+          <td>(</td>
+          <td class="paramtype">const httplib::Request &amp;&#160;</td>
+          <td class="paramname"><em>req</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">httplib::Response &amp;&#160;</td>
+          <td class="paramname"><em>res</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Обработка страницы загрузки файлов </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">req</td><td>HTTP запрос </td></tr>
+    <tr><td class="paramname">res</td><td>HTTP ответ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad7f9a98bdf07b1038febea1bb90d9515" name="ad7f9a98bdf07b1038febea1bb90d9515"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7f9a98bdf07b1038febea1bb90d9515">&#9670;&#160;</a></span>handle_file_upload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void handle_file_upload </td>
+          <td>(</td>
+          <td class="paramtype">const httplib::Request &amp;&#160;</td>
+          <td class="paramname"><em>req</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">httplib::Response &amp;&#160;</td>
+          <td class="paramname"><em>res</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Обработка загрузки файла </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">req</td><td>HTTP запрос </td></tr>
+    <tr><td class="paramname">res</td><td>HTTP ответ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a393ee32d149db848521732b0a4302057" name="a393ee32d149db848521732b0a4302057"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a393ee32d149db848521732b0a4302057">&#9670;&#160;</a></span>logMessage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void logMessage </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>message</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Логирование сообщений </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>Сообщение для логирования </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae66f6b31b5ad750f1fe042a706a4e3d4" name="ae66f6b31b5ad750f1fe042a706a4e3d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae66f6b31b5ad750f1fe042a706a4e3d4">&#9670;&#160;</a></span>main()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int main </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Основная функция </p>
+<p>Инициализация работы бота заимствована у автора <a href="https://www.youtube.com/@cpp">https://www.youtube.com/@cpp</a> Ссылка на прямой источник: <a href="https://www.youtube.com/watch?v=d5a0_UL-SeY">https://www.youtube.com/watch?v=d5a0_UL-SeY</a></p>
+<dl class="section return"><dt>Возвращает</dt><dd>int Код завершения программы </dd></dl>
+
+</div>
+</div>
+<a id="adf4ab2fbd31647cf97c87c0b96136934" name="adf4ab2fbd31647cf97c87c0b96136934"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf4ab2fbd31647cf97c87c0b96136934">&#9670;&#160;</a></span>updateUserToken()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void updateUserToken </td>
+          <td>(</td>
+          <td class="paramtype">int64_t&#160;</td>
+          <td class="paramname"><em>userId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>token</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Обновление токена пользователя </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">userId</td><td>Идентификатор пользователя </td></tr>
+    <tr><td class="paramname">token</td><td>Новый токен пользователя </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a31c1f3aaa542d065aa2d9f429ea6a132" name="a31c1f3aaa542d065aa2d9f429ea6a132"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31c1f3aaa542d065aa2d9f429ea6a132">&#9670;&#160;</a></span>validate_token()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool validate_token </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>token</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Проверка валидности токена </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">token</td><td>Токен пользователя </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Возвращает</dt><dd>true Токен валиден </dd>
+<dd>
+false Токен не валиден </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Создано системой&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+</small></address>
+</body>
+</html>

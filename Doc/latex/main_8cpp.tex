@@ -1,0 +1,357 @@
+\doxysection{Файл main.\+cpp}
+\hypertarget{main_8cpp}{}\label{main_8cpp}\index{main.cpp@{main.cpp}}
+
+
+Основной файл для запуска Telegram бота и сервера для управления файлами.  
+
+
+{\ttfamily \#include $<$tgbot/tgbot.\+h$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$memory$>$}\newline
+{\ttfamily \#include $<$random$>$}\newline
+{\ttfamily \#include $<$filesystem$>$}\newline
+{\ttfamily \#include $<$thread$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$sstream$>$}\newline
+{\ttfamily \#include $<$httplib.\+h$>$}\newline
+{\ttfamily \#include $<$ctime$>$}\newline
+{\ttfamily \#include $<$SQLite\+Cpp/\+SQLite\+Cpp.\+h$>$}\newline
+\doxysubsubsection*{Функции}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{main_8cpp_a239cbd575d4f7beefc99ecc13a13af81}{get\+Current\+Dir}} ()
+\begin{DoxyCompactList}\small\item\em Получение текущего рабочего каталога \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_a393ee32d149db848521732b0a4302057}{log\+Message}} (const std\+::string \&message)
+\begin{DoxyCompactList}\small\item\em Логирование сообщений \end{DoxyCompactList}\item 
+\Hypertarget{main_8cpp_a7acd85516b0bd48a6fa3e5415a8e814c}\label{main_8cpp_a7acd85516b0bd48a6fa3e5415a8e814c} 
+void {\bfseries init\+Database} ()
+\begin{DoxyCompactList}\small\item\em Инициализация базы данных \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_a20878693b412994315ee6cfce2fe895a}{add\+User\+To\+Database}} (int64\+\_\+t user\+Id)
+\begin{DoxyCompactList}\small\item\em Добавление пользователя в базу данных \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{main_8cpp_a892adc4f56545e9ad549cf2c910a2304}{generate\+Token}} ()
+\begin{DoxyCompactList}\small\item\em Генерация токена \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_adf4ab2fbd31647cf97c87c0b96136934}{update\+User\+Token}} (int64\+\_\+t user\+Id, const std\+::string \&token)
+\begin{DoxyCompactList}\small\item\em Обновление токена пользователя \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{main_8cpp_a29b0702fd19320e040442dd0286096cb}{get\+User\+Token}} (int64\+\_\+t user\+Id)
+\begin{DoxyCompactList}\small\item\em Получение токена пользователя \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_adbbae2fb967835c5853733560edfd82b}{create\+Folder\+For\+User}} (const std\+::string \&token)
+\begin{DoxyCompactList}\small\item\em Создание папки для пользователя \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{main_8cpp_a0b0abda6a5878edf8760a7c6cb2bc873}{get\+\_\+files}} (const std\+::string \&folder\+\_\+path)
+\begin{DoxyCompactList}\small\item\em Получение списка файлов в папке \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{main_8cpp_a31c1f3aaa542d065aa2d9f429ea6a132}{validate\+\_\+token}} (const std\+::string \&token)
+\begin{DoxyCompactList}\small\item\em Проверка валидности токена \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{main_8cpp_a2d4d17624a719b42568a07c02c2e7563}{generate\+\_\+file\+\_\+list\+\_\+html}} (const std\+::vector$<$ std\+::string $>$ \&files, const std\+::string \&token)
+\begin{DoxyCompactList}\small\item\em Генерация HTML списка файлов \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{main_8cpp_a18cd4e111f55b98128860f835d73dfda}{generate\+\_\+send\+\_\+token}} (size\+\_\+t length)
+\begin{DoxyCompactList}\small\item\em Генерация токена для отправки файла \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_ad7f9a98bdf07b1038febea1bb90d9515}{handle\+\_\+file\+\_\+upload}} (const httplib\+::\+Request \&req, httplib\+::\+Response \&res)
+\begin{DoxyCompactList}\small\item\em Обработка загрузки файла \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_a5757e18bc9e6054c1e3c3aacc7de777d}{handle\+\_\+file\+\_\+download\+\_\+page}} (const httplib\+::\+Request \&req, httplib\+::\+Response \&res)
+\begin{DoxyCompactList}\small\item\em Обработка страницы загрузки файлов \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_ae3f222f3d2375924073b5b4784db82d2}{handle\+\_\+file\+\_\+download}} (const httplib\+::\+Request \&req, httplib\+::\+Response \&res)
+\begin{DoxyCompactList}\small\item\em Обработка загрузки файла \end{DoxyCompactList}\item 
+\Hypertarget{main_8cpp_a581b7b188a852f31975516f81efcc954}\label{main_8cpp_a581b7b188a852f31975516f81efcc954} 
+void {\bfseries start\+Server} ()
+\begin{DoxyCompactList}\small\item\em Запуск сервера \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\begin{DoxyCompactList}\small\item\em Основная функция \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Переменные}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{main_8cpp_a0423f4cb393331ce0b9f6b3a43adcaae}\label{main_8cpp_a0423f4cb393331ce0b9f6b3a43adcaae} 
+const std\+::string {\bfseries BASE\+\_\+\+PATH} = \mbox{\hyperlink{main_8cpp_a239cbd575d4f7beefc99ecc13a13af81}{get\+Current\+Dir}}()
+\item 
+\Hypertarget{main_8cpp_a0c2aed35b22e564ab5989af8454f5d67}\label{main_8cpp_a0c2aed35b22e564ab5989af8454f5d67} 
+const std\+::string {\bfseries DB\+\_\+\+PATH} = BASE\+\_\+\+PATH + "{}/cloud\+\_\+storage.\+db"{}
+\item 
+\Hypertarget{main_8cpp_a0947e2c5ce91ea54dc053588fb978d7a}\label{main_8cpp_a0947e2c5ce91ea54dc053588fb978d7a} 
+const std\+::string {\bfseries HTML\+\_\+\+PATH} = BASE\+\_\+\+PATH + "{}/"{}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Подробное описание}
+Основной файл для запуска Telegram бота и сервера для управления файлами. 
+
+Используемые библиотеки\+:
+\begin{DoxyItemize}
+\item Tg\+Bot\+: Библиотека для работы с Telegram Bot API. Используется для управления ботом и обработки событий.
+\item SQLite\+Cpp\+: Библиотека для работы с базой данных SQLite. Используется для хранения данных пользователей и токенов.
+\item httplib\+: Библиотека для создания HTTP сервера. Используется для обработки загрузок и загрузок файлов.
+\item $<$random$>$\+: Используется для генерации случайных токенов.
+\item $<$filesystem$>$\+: Используется для работы с файловой системой.
+\item $<$thread$>$\+: Используется для запуска сервера в отдельном потоке.
+\item $<$fstream$>$\+: Используется для работы с файловыми потоками.
+\item $<$sstream$>$\+: Используется для работы с потоками строк.
+\item $<$ctime$>$\+: Используется для получения текущего времени для логирования.
+\end{DoxyItemize}
+
+Основные функции\+:
+\begin{DoxyItemize}
+\item get\+Current\+Dir\+: Получение текущего рабочего каталога.
+\item log\+Message\+: Логирование сообщений.
+\item init\+Database\+: Инициализация базы данных.
+\item add\+User\+To\+Database\+: Добавление пользователя в базу данных.
+\item generate\+Token\+: Генерация случайного токена.
+\item update\+User\+Token\+: Обновление токена пользователя в базе данных.
+\item get\+User\+Token\+: Получение токена пользователя из базы данных.
+\item create\+Folder\+For\+User\+: Создание папки для хранения файлов пользователя.
+\item get\+\_\+files\+: Получение списка файлов в папке.
+\item validate\+\_\+token\+: Проверка валидности токена.
+\item generate\+\_\+file\+\_\+list\+\_\+html\+: Генерация HTML списка файлов.
+\item generate\+\_\+send\+\_\+token\+: Генерация токена для отправки файла.
+\item handle\+\_\+file\+\_\+upload\+: Обработка загрузки файла.
+\item handle\+\_\+file\+\_\+download\+\_\+page\+: Обработка страницы загрузки файлов.
+\item handle\+\_\+file\+\_\+download\+: Обработка загрузки файла.
+\item start\+Server\+: Запуск HTTP сервера.
+\item main\+: Основная функция. 
+\end{DoxyItemize}
+
+\doxysubsection{Функции}
+\Hypertarget{main_8cpp_a20878693b412994315ee6cfce2fe895a}\label{main_8cpp_a20878693b412994315ee6cfce2fe895a} 
+\index{main.cpp@{main.cpp}!addUserToDatabase@{addUserToDatabase}}
+\index{addUserToDatabase@{addUserToDatabase}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{addUserToDatabase()}{addUserToDatabase()}}
+{\footnotesize\ttfamily void add\+User\+To\+Database (\begin{DoxyParamCaption}\item[{int64\+\_\+t}]{user\+Id }\end{DoxyParamCaption})}
+
+
+
+Добавление пользователя в базу данных 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em user\+Id} & Идентификатор пользователя \\
+\hline
+\end{DoxyParams}
+\Hypertarget{main_8cpp_adbbae2fb967835c5853733560edfd82b}\label{main_8cpp_adbbae2fb967835c5853733560edfd82b} 
+\index{main.cpp@{main.cpp}!createFolderForUser@{createFolderForUser}}
+\index{createFolderForUser@{createFolderForUser}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{createFolderForUser()}{createFolderForUser()}}
+{\footnotesize\ttfamily void create\+Folder\+For\+User (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{token }\end{DoxyParamCaption})}
+
+
+
+Создание папки для пользователя 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em token} & Токен пользователя \\
+\hline
+\end{DoxyParams}
+\Hypertarget{main_8cpp_a2d4d17624a719b42568a07c02c2e7563}\label{main_8cpp_a2d4d17624a719b42568a07c02c2e7563} 
+\index{main.cpp@{main.cpp}!generate\_file\_list\_html@{generate\_file\_list\_html}}
+\index{generate\_file\_list\_html@{generate\_file\_list\_html}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{generate\_file\_list\_html()}{generate\_file\_list\_html()}}
+{\footnotesize\ttfamily std\+::string generate\+\_\+file\+\_\+list\+\_\+html (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::string $>$ \&}]{files,  }\item[{const std\+::string \&}]{token }\end{DoxyParamCaption})}
+
+
+
+Генерация HTML списка файлов 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em files} & Список файлов \\
+\hline
+{\em token} & Токен пользователя \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Возвращает}
+std\+::string HTML список файлов 
+\end{DoxyReturn}
+\Hypertarget{main_8cpp_a18cd4e111f55b98128860f835d73dfda}\label{main_8cpp_a18cd4e111f55b98128860f835d73dfda} 
+\index{main.cpp@{main.cpp}!generate\_send\_token@{generate\_send\_token}}
+\index{generate\_send\_token@{generate\_send\_token}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{generate\_send\_token()}{generate\_send\_token()}}
+{\footnotesize\ttfamily std\+::string generate\+\_\+send\+\_\+token (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{length }\end{DoxyParamCaption})}
+
+
+
+Генерация токена для отправки файла 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em length} & Длина токена \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Возвращает}
+std\+::string Сгенерированный токен 
+\end{DoxyReturn}
+\Hypertarget{main_8cpp_a892adc4f56545e9ad549cf2c910a2304}\label{main_8cpp_a892adc4f56545e9ad549cf2c910a2304} 
+\index{main.cpp@{main.cpp}!generateToken@{generateToken}}
+\index{generateToken@{generateToken}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{generateToken()}{generateToken()}}
+{\footnotesize\ttfamily std\+::string generate\+Token (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Генерация токена 
+
+\begin{DoxyReturn}{Возвращает}
+std\+::string Сгенерированный токен 
+\end{DoxyReturn}
+\Hypertarget{main_8cpp_a0b0abda6a5878edf8760a7c6cb2bc873}\label{main_8cpp_a0b0abda6a5878edf8760a7c6cb2bc873} 
+\index{main.cpp@{main.cpp}!get\_files@{get\_files}}
+\index{get\_files@{get\_files}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{get\_files()}{get\_files()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::string $>$ get\+\_\+files (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{folder\+\_\+path }\end{DoxyParamCaption})}
+
+
+
+Получение списка файлов в папке 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em folder\+\_\+path} & Путь к папке \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Возвращает}
+std\+::vector$<$std\+::string$>$ Список файлов 
+\end{DoxyReturn}
+\Hypertarget{main_8cpp_a239cbd575d4f7beefc99ecc13a13af81}\label{main_8cpp_a239cbd575d4f7beefc99ecc13a13af81} 
+\index{main.cpp@{main.cpp}!getCurrentDir@{getCurrentDir}}
+\index{getCurrentDir@{getCurrentDir}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{getCurrentDir()}{getCurrentDir()}}
+{\footnotesize\ttfamily std\+::string get\+Current\+Dir (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Получение текущего рабочего каталога 
+
+\begin{DoxyReturn}{Возвращает}
+std\+::string Текущий рабочий каталог 
+\end{DoxyReturn}
+\Hypertarget{main_8cpp_a29b0702fd19320e040442dd0286096cb}\label{main_8cpp_a29b0702fd19320e040442dd0286096cb} 
+\index{main.cpp@{main.cpp}!getUserToken@{getUserToken}}
+\index{getUserToken@{getUserToken}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{getUserToken()}{getUserToken()}}
+{\footnotesize\ttfamily std\+::string get\+User\+Token (\begin{DoxyParamCaption}\item[{int64\+\_\+t}]{user\+Id }\end{DoxyParamCaption})}
+
+
+
+Получение токена пользователя 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em user\+Id} & Идентификатор пользователя \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Возвращает}
+std\+::string Токен пользователя 
+\end{DoxyReturn}
+\Hypertarget{main_8cpp_ae3f222f3d2375924073b5b4784db82d2}\label{main_8cpp_ae3f222f3d2375924073b5b4784db82d2} 
+\index{main.cpp@{main.cpp}!handle\_file\_download@{handle\_file\_download}}
+\index{handle\_file\_download@{handle\_file\_download}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{handle\_file\_download()}{handle\_file\_download()}}
+{\footnotesize\ttfamily void handle\+\_\+file\+\_\+download (\begin{DoxyParamCaption}\item[{const httplib\+::\+Request \&}]{req,  }\item[{httplib\+::\+Response \&}]{res }\end{DoxyParamCaption})}
+
+
+
+Обработка загрузки файла 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em req} & HTTP запрос \\
+\hline
+{\em res} & HTTP ответ \\
+\hline
+\end{DoxyParams}
+\Hypertarget{main_8cpp_a5757e18bc9e6054c1e3c3aacc7de777d}\label{main_8cpp_a5757e18bc9e6054c1e3c3aacc7de777d} 
+\index{main.cpp@{main.cpp}!handle\_file\_download\_page@{handle\_file\_download\_page}}
+\index{handle\_file\_download\_page@{handle\_file\_download\_page}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{handle\_file\_download\_page()}{handle\_file\_download\_page()}}
+{\footnotesize\ttfamily void handle\+\_\+file\+\_\+download\+\_\+page (\begin{DoxyParamCaption}\item[{const httplib\+::\+Request \&}]{req,  }\item[{httplib\+::\+Response \&}]{res }\end{DoxyParamCaption})}
+
+
+
+Обработка страницы загрузки файлов 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em req} & HTTP запрос \\
+\hline
+{\em res} & HTTP ответ \\
+\hline
+\end{DoxyParams}
+\Hypertarget{main_8cpp_ad7f9a98bdf07b1038febea1bb90d9515}\label{main_8cpp_ad7f9a98bdf07b1038febea1bb90d9515} 
+\index{main.cpp@{main.cpp}!handle\_file\_upload@{handle\_file\_upload}}
+\index{handle\_file\_upload@{handle\_file\_upload}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{handle\_file\_upload()}{handle\_file\_upload()}}
+{\footnotesize\ttfamily void handle\+\_\+file\+\_\+upload (\begin{DoxyParamCaption}\item[{const httplib\+::\+Request \&}]{req,  }\item[{httplib\+::\+Response \&}]{res }\end{DoxyParamCaption})}
+
+
+
+Обработка загрузки файла 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em req} & HTTP запрос \\
+\hline
+{\em res} & HTTP ответ \\
+\hline
+\end{DoxyParams}
+\Hypertarget{main_8cpp_a393ee32d149db848521732b0a4302057}\label{main_8cpp_a393ee32d149db848521732b0a4302057} 
+\index{main.cpp@{main.cpp}!logMessage@{logMessage}}
+\index{logMessage@{logMessage}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{logMessage()}{logMessage()}}
+{\footnotesize\ttfamily void log\+Message (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{message }\end{DoxyParamCaption})}
+
+
+
+Логирование сообщений 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em message} & Сообщение для логирования \\
+\hline
+\end{DoxyParams}
+\Hypertarget{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+\index{main.cpp@{main.cpp}!main@{main}}
+\index{main@{main}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Основная функция 
+
+Инициализация работы бота заимствована у автора \href{https://www.youtube.com/@cpp}{\texttt{ https\+://www.\+youtube.\+com/@cpp}} Ссылка на прямой источник\+: \href{https://www.youtube.com/watch?v=d5a0_UL-SeY}{\texttt{ https\+://www.\+youtube.\+com/watch?v=d5a0\+\_\+\+UL-\/\+SeY}}
+
+\begin{DoxyReturn}{Возвращает}
+int Код завершения программы 
+\end{DoxyReturn}
+\Hypertarget{main_8cpp_adf4ab2fbd31647cf97c87c0b96136934}\label{main_8cpp_adf4ab2fbd31647cf97c87c0b96136934} 
+\index{main.cpp@{main.cpp}!updateUserToken@{updateUserToken}}
+\index{updateUserToken@{updateUserToken}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{updateUserToken()}{updateUserToken()}}
+{\footnotesize\ttfamily void update\+User\+Token (\begin{DoxyParamCaption}\item[{int64\+\_\+t}]{user\+Id,  }\item[{const std\+::string \&}]{token }\end{DoxyParamCaption})}
+
+
+
+Обновление токена пользователя 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em user\+Id} & Идентификатор пользователя \\
+\hline
+{\em token} & Новый токен пользователя \\
+\hline
+\end{DoxyParams}
+\Hypertarget{main_8cpp_a31c1f3aaa542d065aa2d9f429ea6a132}\label{main_8cpp_a31c1f3aaa542d065aa2d9f429ea6a132} 
+\index{main.cpp@{main.cpp}!validate\_token@{validate\_token}}
+\index{validate\_token@{validate\_token}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{validate\_token()}{validate\_token()}}
+{\footnotesize\ttfamily bool validate\+\_\+token (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{token }\end{DoxyParamCaption})}
+
+
+
+Проверка валидности токена 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em token} & Токен пользователя \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Возвращает}
+true Токен валиден 
+
+false Токен не валиден 
+\end{DoxyReturn}
