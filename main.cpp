@@ -1,3 +1,38 @@
+/**
+ * @file main.cpp
+ * @brief Основной файл для запуска Telegram бота и сервера для управления файлами.
+ * 
+ * Используемые библиотеки:
+ * - TgBot: Библиотека для работы с Telegram Bot API. Используется для управления ботом и обработки событий.
+ * - SQLiteCpp: Библиотека для работы с базой данных SQLite. Используется для хранения данных пользователей и токенов.
+ * - httplib: Библиотека для создания HTTP сервера. Используется для обработки загрузок и загрузок файлов.
+ * - <random>: Используется для генерации случайных токенов.
+ * - <filesystem>: Используется для работы с файловой системой.
+ * - <thread>: Используется для запуска сервера в отдельном потоке.
+ * - <fstream>: Используется для работы с файловыми потоками.
+ * - <sstream>: Используется для работы с потоками строк.
+ * - <ctime>: Используется для получения текущего времени для логирования.
+ * 
+ * Основные функции:
+ * - getCurrentDir: Получение текущего рабочего каталога.
+ * - logMessage: Логирование сообщений.
+ * - initDatabase: Инициализация базы данных.
+ * - addUserToDatabase: Добавление пользователя в базу данных.
+ * - generateToken: Генерация случайного токена.
+ * - updateUserToken: Обновление токена пользователя в базе данных.
+ * - getUserToken: Получение токена пользователя из базы данных.
+ * - createFolderForUser: Создание папки для хранения файлов пользователя.
+ * - get_files: Получение списка файлов в папке.
+ * - validate_token: Проверка валидности токена.
+ * - generate_file_list_html: Генерация HTML списка файлов.
+ * - generate_send_token: Генерация токена для отправки файла.
+ * - handle_file_upload: Обработка загрузки файла.
+ * - handle_file_download_page: Обработка страницы загрузки файлов.
+ * - handle_file_download: Обработка загрузки файла.
+ * - startServer: Запуск HTTP сервера.
+ * - main: Основная функция.
+ */
+
 #include <tgbot/tgbot.h>
 #include <iostream>
 #include <memory>
@@ -14,30 +49,37 @@
 
 namespace fs = std::filesystem;
 
-// Получение текущего рабочего каталога
+/**
+ * @brief Получение текущего рабочего каталога
+ * 
+ * @return std::string Текущий рабочий каталог
+ */
 std::string getCurrentDir() {
     return fs::current_path().string();
 }
 
-// Пути к файлам, основанные на текущем рабочем каталоге
 const std::string BASE_PATH = getCurrentDir();
 const std::string DB_PATH = BASE_PATH + "/cloud_storage.db";
 const std::string HTML_PATH = BASE_PATH + "/";
 
-// Остальная часть кода...
-
+/**
+ * @brief Логирование сообщений
+ * 
+ * @param message Сообщение для логирования
+ */
 void logMessage(const std::string& message) {
     std::ofstream logFile(BASE_PATH + "/bot.log", std::ios_base::app);
     std::time_t now = std::time(nullptr);
     logFile << std::ctime(&now) << ": " << message << std::endl;
 }
 
+/**
+ * @brief Инициализация базы данных
+ */
 void initDatabase() {
     try {
         SQLite::Database db(DB_PATH, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-        db.exec("CREATE TABLE IF NOT EXISTS users ("
-                "id INTEGER PRIMARY KEY, "
-                "token TEXT);");
+        db.exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, token TEXT);");
         logMessage("Database initialized successfully.");
     }
     catch (const std::exception& e) {
@@ -45,12 +87,17 @@ void initDatabase() {
     }
 }
 
+/**
+ * @brief Добавление пользователя в базу данных
+ * 
+ * @param userId Идентификатор пользователя
+ */
 void addUserToDatabase(int64_t userId) {
     try {
         SQLite::Database db(DB_PATH, SQLite::OPEN_READWRITE);
         SQLite::Statement query(db, "INSERT OR IGNORE INTO users (id, token) VALUES (?, ?)");
         query.bind(1, userId);
-        query.bind(2, nullptr);  // Initially, token is NULL
+        query.bind(2, nullptr);
         query.exec();
         logMessage("User added to database successfully. UserID: " + std::to_string(userId));
     }
@@ -59,6 +106,11 @@ void addUserToDatabase(int64_t userId) {
     }
 }
 
+/**
+ * @brief Генерация токена
+ * 
+ * @return std::string Сгенерированный токен
+ */
 std::string generateToken() {
     const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     const size_t maxIndex = (sizeof(charset) - 1);
@@ -74,6 +126,12 @@ std::string generateToken() {
     return token;
 }
 
+/**
+ * @brief Обновление токена пользователя
+ * 
+ * @param userId Идентификатор пользователя
+ * @param token Новый токен пользователя
+ */
 void updateUserToken(int64_t userId, const std::string& token) {
     try {
         SQLite::Database db(DB_PATH, SQLite::OPEN_READWRITE);
@@ -88,6 +146,12 @@ void updateUserToken(int64_t userId, const std::string& token) {
     }
 }
 
+/**
+ * @brief Получение токена пользователя
+ * 
+ * @param userId Идентификатор пользователя
+ * @return std::string Токен пользователя
+ */
 std::string getUserToken(int64_t userId) {
     try {
         SQLite::Database db(DB_PATH, SQLite::OPEN_READONLY);
@@ -106,6 +170,11 @@ std::string getUserToken(int64_t userId) {
     return "";
 }
 
+/**
+ * @brief Создание папки для пользователя
+ * 
+ * @param token Токен пользователя
+ */
 void createFolderForUser(const std::string& token) {
     try {
         std::string path = BASE_PATH + "/files/" + token;
@@ -117,6 +186,12 @@ void createFolderForUser(const std::string& token) {
     }
 }
 
+/**
+ * @brief Получение списка файлов в папке
+ * 
+ * @param folder_path Путь к папке
+ * @return std::vector<std::string> Список файлов
+ */
 std::vector<std::string> get_files(const std::string& folder_path) {
     std::vector<std::string> file_list;
     for (const auto& entry : fs::directory_iterator(folder_path)) {
@@ -126,6 +201,13 @@ std::vector<std::string> get_files(const std::string& folder_path) {
     return file_list;
 }
 
+/**
+ * @brief Проверка валидности токена
+ * 
+ * @param token Токен пользователя
+ * @return true Токен валиден
+ * @return false Токен не валиден
+ */
 bool validate_token(const std::string& token) {
     std::string token_folder = BASE_PATH + "/files/" + token;
     bool isValid = fs::exists(token_folder) && fs::is_directory(token_folder);
@@ -133,6 +215,13 @@ bool validate_token(const std::string& token) {
     return isValid;
 }
 
+/**
+ * @brief Генерация HTML списка файлов
+ * 
+ * @param files Список файлов
+ * @param token Токен пользователя
+ * @return std::string HTML список файлов
+ */
 std::string generate_file_list_html(const std::vector<std::string>& files, const std::string& token) {
     std::stringstream ss;
     for (const auto& file : files) {
@@ -142,11 +231,14 @@ std::string generate_file_list_html(const std::vector<std::string>& files, const
     return ss.str();
 }
 
+/**
+ * @brief Генерация токена для отправки файла
+ * 
+ * @param length Длина токена
+ * @return std::string Сгенерированный токен
+ */
 std::string generate_send_token(size_t length) {
-    const char charset[] =
-            "0123456789"
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "abcdefghijklmnopqrstuvwxyz";
+    const char charset[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     std::default_random_engine rng(std::random_device{}());
     std::uniform_int_distribution<> dist(0, sizeof(charset) - 2);
 
@@ -157,6 +249,12 @@ std::string generate_send_token(size_t length) {
     return token;
 }
 
+/**
+ * @brief Обработка загрузки файла
+ * 
+ * @param req HTTP запрос
+ * @param res HTTP ответ
+ */
 void handle_file_upload(const httplib::Request& req, httplib::Response& res) {
     std::string token = generate_send_token(12);
     std::string dir_path = BASE_PATH + "/hidefiles/" + token;
@@ -184,6 +282,12 @@ void handle_file_upload(const httplib::Request& req, httplib::Response& res) {
     res.set_content(response, "application/json");
 }
 
+/**
+ * @brief Обработка страницы загрузки файлов
+ * 
+ * @param req HTTP запрос
+ * @param res HTTP ответ
+ */
 void handle_file_download_page(const httplib::Request& req, httplib::Response& res) {
     std::string token = req.matches[1].str();
     std::string dir_path = BASE_PATH + "/hidefiles/" + token;
@@ -207,6 +311,12 @@ void handle_file_download_page(const httplib::Request& req, httplib::Response& r
     res.set_content(html, "text/html");
 }
 
+/**
+ * @brief Обработка загрузки файла
+ * 
+ * @param req HTTP запрос
+ * @param res HTTP ответ
+ */
 void handle_file_download(const httplib::Request& req, httplib::Response& res) {
     std::string token = req.matches[1].str();
     std::string filename = req.matches[2].str();
@@ -225,6 +335,9 @@ void handle_file_download(const httplib::Request& req, httplib::Response& res) {
     }
 }
 
+/**
+ * @brief Запуск сервера
+ */
 void startServer() {
     httplib::Server svr;
 
@@ -291,10 +404,18 @@ void startServer() {
     svr.listen("0.0.0.0", 8080);
 }
 
+/**
+ * @brief Основная функция
+ * 
+ * Инициализация работы бота заимствована у автора https://www.youtube.com/@cpp
+ * Ссылка на прямой источник: https://www.youtube.com/watch?v=d5a0_UL-SeY
+ * 
+ * @return int Код завершения программы
+ */
 int main() {
     std::thread serverThread(startServer);
 
-    TgBot::Bot bot("7241180998:AAEBDjKwo4gRCZZYgWkNhZkKSWrEKitsHDg");
+    TgBot::Bot bot("YOUR_BOT_TOKEN");
 
     initDatabase();
 
@@ -379,7 +500,7 @@ int main() {
 
                 TgBot::InlineKeyboardButton::Ptr webAppButton(new TgBot::InlineKeyboardButton);
                 webAppButton->text = "Open WebApp";
-                webAppButton->url = "https://feb7-109-252-160-118.ngrok-free.app"; // Replace with your actual URL
+                webAppButton->url = "https://monthly-relaxed-molly.ngrok-free.app";
                 row.push_back(webAppButton);
 
                 keyboard->inlineKeyboard.push_back(row);
@@ -394,7 +515,7 @@ int main() {
 
             TgBot::InlineKeyboardButton::Ptr webAppButton(new TgBot::InlineKeyboardButton);
             webAppButton->text = "Open WebApp";
-            webAppButton->url = "https://feb7-109-252-160-118.ngrok-free.app/sendfile"; // Replace with your actual URL
+            webAppButton->url = "https://monthly-relaxed-molly.ngrok-free.app/sendfile";
             row.push_back(webAppButton);
 
             keyboard->inlineKeyboard.push_back(row);
